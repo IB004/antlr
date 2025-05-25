@@ -18,11 +18,11 @@ public class EvalVisitor extends LabeledExprBaseVisitor<Integer> {
     /** "memory" for our calculator; variable/value pairs go here */
     Map<String, Integer> memory = new HashMap<>();
 
-    /** ID '=' expr NEWLINE */
+    /** ID '=' res NEWLINE */
     @Override
     public Integer visitAssign(LabeledExprParser.AssignContext ctx) {
         String id = ctx.ID().getText();  // id is left-hand side of '='
-        int value = visit(ctx.expr());   // compute value of expression on right
+        int value = visit(ctx.res());   // compute value of expression on right
         memory.put(id, value);           // store it in our memory
         return value;
     }
@@ -33,6 +33,54 @@ public class EvalVisitor extends LabeledExprBaseVisitor<Integer> {
         Integer value = visit(ctx.expr()); // evaluate the expr child
         System.out.println(value);         // print the result
         return 0;                          // return dummy value
+    }
+
+    @Override
+    public Integer visitTrue(LabeledExprParser.TrueContext ctx){
+        return 1;
+    }
+
+    @Override
+    public Integer visitFalse(LabeledExprParser.FalseContext ctx){
+        return 0;
+    }
+
+    @Override
+    public Integer visitCompare(LabeledExprParser.CompareContext ctx){
+        int left = visit(ctx.expr(0));  // get value of left subexpression
+        int right = visit(ctx.expr(1)); // get value of right subexpression
+        if (ctx.op.getType() == LabeledExprParser.GRT)
+            return (left > right) ? 1 : 0;
+        if (ctx.op.getType() == LabeledExprParser.LES)
+            return (left < right) ? 1 : 0;
+        else
+            return (left == right) ? 1 : 0;
+    }
+
+    @Override
+    public Integer visitAnd(LabeledExprParser.AndContext ctx) {
+        int left = visit(ctx.prop(0));  // get value of left subexpression
+        int right = visit(ctx.prop(1)); // get value of right subexpression
+        return left * right;
+    }
+
+    @Override
+    public Integer visitOr(LabeledExprParser.OrContext ctx) {
+        int left = visit(ctx.prop(0));  // get value of left subexpression
+        int right = visit(ctx.prop(1)); // get value of right subexpression
+        return (left + right) % 2;
+    }
+
+    @Override
+    public Integer visitPropParens(LabeledExprParser.PropParensContext ctx) {
+        return visit(ctx.prop());
+    }
+
+    @Override
+    public Integer visitPropId(LabeledExprParser.PropIdContext ctx) {
+        String id = ctx.ID().getText();
+        if ( memory.containsKey(id) ) return memory.get(id);
+        return 0;
     }
 
     /** INT */

@@ -8,7 +8,7 @@ stat:   print END
     |   assign END
     ;
 
-print:  PRINT res;
+print:  PRINT '(' res ')';
 
 assign: ID ASSIGN res;
 
@@ -33,42 +33,46 @@ prop:   expr op=(GRT|LES|EQL) expr  # Compare
 expr:   SUB expr                    # UnaryMinus
     |   expr op=(MUL|DIV) expr      # MulDiv
     |   expr op=(ADD|SUB) expr      # AddSub
-    |   INT                         # int
-    |   ID                          # id
-    |   '(' expr ')'                # parens
+    |   INT                         # Int
+    |   FLOAT                       # Float
+    |   ID                          # Id
+    |   STRING                      # String
+    |   '(' expr ')'                # Parens
     ;
 
 
-MUL :   '*' ;
-DIV :   '/' ;
-ADD :   '+' ;
-SUB :   '-' ;
+MUL     :   '*' ;
+DIV     :   '/' ;
+ADD     :   '+' ;
+SUB     :   '-' ;
 
-GRT:    '>';
-LES:    '<';
-EQL:    '==';
+GRT     :   '>' ;
+LES     :   '<' ;
+EQL     :   '==' ;
 
-AND:    '&&';
-OR:     '||';
-NOT:    '!';
+AND     :   '&&' ;
+OR      :   '||' ;
+NOT     :   '!' ;
 
-ASSIGN: '=';
+ASSIGN  :   '=' ;
 
-INT_T:      'int';
-FLOAT_T:    'float';
-BOOL_T:     'bool';
-STRING_T:   'string';
+INT_T   :   'int' ;
+FLOAT_T :   'float' ;
+BOOL_T  :   'bool' ;
+STRING_T:   'string' ;
 
-TRUE:   'true';
-FALSE:  'false';
+PRINT   :   'print' ;
+WHILE   :   'while' ;
+IF      :   'if' ;
+ELSE    :   'else' ;
 
-PRINT:  'print';
-WHILE:  'while';
-IF:     'if';
-ELSE:   'else';
+ID      :   [a-zA-Z_][a-zA-Z0-9_]* ;
+INT     :   [+-]?[0-9]+ ;
+FLOAT   :   [+-]?[0-9]*'.'[0-9]+ ;
+TRUE    :   'true' ;
+FALSE   :   'false' ;
+STRING  :   '"' ('\\"' | ~["\r\n])* '"' ;
 
-ID  :   [a-zA-Z_][a-zA-Z0-9_]*;
-INT :   [0-9]+;
-
-END:    ';';
-WS  :   [ \t\n\r]+ -> skip ;
+END     :   ';' ;
+WS      :   [ \t\n\r]+ -> skip ;
+COMMENT :   '//' ~[\r\n]* '\r'? '\n' -> skip ;

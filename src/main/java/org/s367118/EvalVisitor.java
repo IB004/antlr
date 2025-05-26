@@ -1,27 +1,15 @@
 package org.s367118;
 
-/***
- * Excerpted from "The Definitive ANTLR 4 Reference",
- * published by The Pragmatic Bookshelf.
- * Copyrights apply to this code. It may not be used to create training material,
- * courses, books, articles, and the like. Contact us if you are in doubt.
- * We make no guarantees that this code is fit for any purpose.
- * Visit http://www.pragmaticprogrammer.com/titles/tpantlr2 for more book information.
- ***/
 import org.s367118.antlr.LanguageParser;
 import org.s367118.antlr.LanguageBaseVisitor;
-import org.s367118.value.BoolValue;
-import org.s367118.value.IntValue;
-import org.s367118.value.Value;
+import org.s367118.value.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class EvalVisitor extends LanguageBaseVisitor<Value> {
-    /** "memory" for our calculator; variable/value pairs go here */
     Map<String, Value> memory = new HashMap<>();
 
-    /** ID '=' res NEWLINE */
     @Override
     public Value visitAssign(LanguageParser.AssignContext ctx) {
         String id = ctx.ID().getText();  // id is left-hand side of '='
@@ -92,13 +80,27 @@ public class EvalVisitor extends LanguageBaseVisitor<Value> {
         throw new VariableIsNotDeclaredException(id);
     }
 
-    /** INT */
     @Override
     public Value visitInt(LanguageParser.IntContext ctx) {
         return new IntValue(Integer.valueOf(ctx.INT().getText()));
     }
 
-    /** ID */
+    @Override
+    public Value visitFloat(LanguageParser.FloatContext ctx) {
+        return new FloatValue(Float.valueOf(ctx.FLOAT().getText()));
+    }
+
+    @Override
+    public Value visitString(LanguageParser.StringContext ctx) {
+        String base = ctx.STRING().getText();
+        String withoutQuotes = base.substring(1, base.length() - 1);
+        String withEscapedChars = withoutQuotes
+                .replace("\\\"", "\"")
+                .replace("\\\n", "\n")
+                ;
+        return new StringValue(withEscapedChars);
+    }
+
     @Override
     public Value visitId(LanguageParser.IdContext ctx) {
         String id = ctx.ID().getText();
@@ -106,7 +108,6 @@ public class EvalVisitor extends LanguageBaseVisitor<Value> {
         throw new VariableIsNotDeclaredException(id);
     }
 
-    /** expr op=('*'|'/') expr */
     @Override
     public Value visitMulDiv(LanguageParser.MulDivContext ctx) {
         Value left = visit(ctx.expr(0));  // get value of left subexpression
@@ -115,7 +116,6 @@ public class EvalVisitor extends LanguageBaseVisitor<Value> {
         return left.div(right); // must be DIV
     }
 
-    /** expr op=('+'|'-') expr */
     @Override
     public Value visitAddSub(LanguageParser.AddSubContext ctx) {
         Value left = visit(ctx.expr(0));  // get value of left subexpression
@@ -130,7 +130,6 @@ public class EvalVisitor extends LanguageBaseVisitor<Value> {
         return value.neg();
     }
 
-    /** '(' expr ')' */
     @Override
     public Value visitParens(LanguageParser.ParensContext ctx) {
         return visit(ctx.expr()); // return child expr's value

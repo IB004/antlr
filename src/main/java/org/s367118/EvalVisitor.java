@@ -8,122 +8,156 @@ package org.s367118;
  * We make no guarantees that this code is fit for any purpose.
  * Visit http://www.pragmaticprogrammer.com/titles/tpantlr2 for more book information.
  ***/
-import org.s367118.antlr.LabeledExprBaseVisitor;
-import org.s367118.antlr.LabeledExprParser;
+import org.s367118.antlr.LanguageParser;
+import org.s367118.antlr.LanguageBaseVisitor;
+import org.s367118.value.BoolValue;
+import org.s367118.value.IntValue;
+import org.s367118.value.Value;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class EvalVisitor extends LabeledExprBaseVisitor<Integer> {
+public class EvalVisitor extends LanguageBaseVisitor<Value> {
     /** "memory" for our calculator; variable/value pairs go here */
-    Map<String, Integer> memory = new HashMap<>();
+    Map<String, Value> memory = new HashMap<>();
 
     /** ID '=' res NEWLINE */
     @Override
-    public Integer visitAssign(LabeledExprParser.AssignContext ctx) {
+    public Value visitAssign(LanguageParser.AssignContext ctx) {
         String id = ctx.ID().getText();  // id is left-hand side of '='
-        int value = visit(ctx.res());   // compute value of expression on right
+        Value value = visit(ctx.res());   // compute value of expression on right
         memory.put(id, value);           // store it in our memory
         return value;
     }
 
-    /** expr NEWLINE */
     @Override
-    public Integer visitPrintExpr(LabeledExprParser.PrintExprContext ctx) {
-        Integer value = visit(ctx.expr()); // evaluate the expr child
-        System.out.println(value);         // print the result
-        return 0;                          // return dummy value
+    public Value visitPrint(LanguageParser.PrintContext ctx) {
+        Value value = visit(ctx.res()); // evaluate the expr child
+        System.out.println(value.represent());         // print the result
+        return null;
+    }
+
+
+    @Override
+    public Value visitTrue(LanguageParser.TrueContext ctx){
+        return new BoolValue(true);
     }
 
     @Override
-    public Integer visitTrue(LabeledExprParser.TrueContext ctx){
-        return 1;
+    public Value visitFalse(LanguageParser.FalseContext ctx){
+        return new BoolValue(false);
     }
 
     @Override
-    public Integer visitFalse(LabeledExprParser.FalseContext ctx){
-        return 0;
-    }
-
-    @Override
-    public Integer visitCompare(LabeledExprParser.CompareContext ctx){
-        int left = visit(ctx.expr(0));  // get value of left subexpression
-        int right = visit(ctx.expr(1)); // get value of right subexpression
-        if (ctx.op.getType() == LabeledExprParser.GRT)
-            return (left > right) ? 1 : 0;
-        if (ctx.op.getType() == LabeledExprParser.LES)
-            return (left < right) ? 1 : 0;
+    public Value visitCompare(LanguageParser.CompareContext ctx){
+        Value left = visit(ctx.expr(0));  // get value of left subexpression
+        Value right = visit(ctx.expr(1)); // get value of right subexpression
+        if (ctx.op.getType() == LanguageParser.GRT)
+            return left.greater(right);
+        if (ctx.op.getType() == LanguageParser.LES)
+            return left.less(right);
         else
-            return (left == right) ? 1 : 0;
+            return left.eql(right);
     }
 
     @Override
-    public Integer visitAnd(LabeledExprParser.AndContext ctx) {
-        int left = visit(ctx.prop(0));  // get value of left subexpression
-        int right = visit(ctx.prop(1)); // get value of right subexpression
-        return left * right;
+    public Value visitAnd(LanguageParser.AndContext ctx) {
+        Value left = visit(ctx.prop(0));  // get value of left subexpression
+        Value right = visit(ctx.prop(1)); // get value of right subexpression
+        return left.mul(right);
     }
 
     @Override
-    public Integer visitOr(LabeledExprParser.OrContext ctx) {
-        int left = visit(ctx.prop(0));  // get value of left subexpression
-        int right = visit(ctx.prop(1)); // get value of right subexpression
-        return (left + right) % 2;
+    public Value visitOr(LanguageParser.OrContext ctx) {
+        Value left = visit(ctx.prop(0));  // get value of left subexpression
+        Value right = visit(ctx.prop(1)); // get value of right subexpression
+        return left.add(right);
     }
 
     @Override
-    public Integer visitPropParens(LabeledExprParser.PropParensContext ctx) {
+    public Value visitNot(LanguageParser.NotContext ctx) {
+        Value value = visit(ctx.prop());
+        return value.neg();
+    }
+
+    @Override
+    public Value visitPropParens(LanguageParser.PropParensContext ctx) {
         return visit(ctx.prop());
     }
 
     @Override
-    public Integer visitPropId(LabeledExprParser.PropIdContext ctx) {
+    public Value visitPropId(LanguageParser.PropIdContext ctx) {
         String id = ctx.ID().getText();
         if ( memory.containsKey(id) ) return memory.get(id);
-        return 0;
+        throw new VariableIsNotDeclaredException(id);
     }
 
     /** INT */
     @Override
-    public Integer visitInt(LabeledExprParser.IntContext ctx) {
-        return Integer.valueOf(ctx.INT().getText());
+    public Value visitInt(LanguageParser.IntContext ctx) {
+        return new IntValue(Integer.valueOf(ctx.INT().getText()));
     }
 
     /** ID */
     @Override
-    public Integer visitId(LabeledExprParser.IdContext ctx) {
+    public Value visitId(LanguageParser.IdContext ctx) {
         String id = ctx.ID().getText();
         if ( memory.containsKey(id) ) return memory.get(id);
-        return 0;
+        throw new VariableIsNotDeclaredException(id);
     }
 
     /** expr op=('*'|'/') expr */
     @Override
-    public Integer visitMulDiv(LabeledExprParser.MulDivContext ctx) {
-        int left = visit(ctx.expr(0));  // get value of left subexpression
-        int right = visit(ctx.expr(1)); // get value of right subexpression
-        if ( ctx.op.getType() == LabeledExprParser.MUL ) return left * right;
-        return left / right; // must be DIV
+    public Value visitMulDiv(LanguageParser.MulDivContext ctx) {
+        Value left = visit(ctx.expr(0));  // get value of left subexpression
+        Value right = visit(ctx.expr(1)); // get value of right subexpression
+        if ( ctx.op.getType() == LanguageParser.MUL ) return left.mul(right);
+        return left.div(right); // must be DIV
     }
 
     /** expr op=('+'|'-') expr */
     @Override
-    public Integer visitAddSub(LabeledExprParser.AddSubContext ctx) {
-        int left = visit(ctx.expr(0));  // get value of left subexpression
-        int right = visit(ctx.expr(1)); // get value of right subexpression
-        if ( ctx.op.getType() == LabeledExprParser.ADD ) return left + right;
-        return left - right; // must be SUB
+    public Value visitAddSub(LanguageParser.AddSubContext ctx) {
+        Value left = visit(ctx.expr(0));  // get value of left subexpression
+        Value right = visit(ctx.expr(1)); // get value of right subexpression
+        if ( ctx.op.getType() == LanguageParser.ADD ) return left.add(right);
+        return left.sub(right); // must be SUB
     }
 
     @Override
-    public Integer visitUnaryMinus(LabeledExprParser.UnaryMinusContext ctx){
-        int value = visit(ctx.expr());
-        return -value;
+    public Value visitUnaryMinus(LanguageParser.UnaryMinusContext ctx){
+        Value value = visit(ctx.expr());
+        return value.neg();
     }
 
     /** '(' expr ')' */
     @Override
-    public Integer visitParens(LabeledExprParser.ParensContext ctx) {
+    public Value visitParens(LanguageParser.ParensContext ctx) {
         return visit(ctx.expr()); // return child expr's value
+    }
+
+
+    @Override
+    public Value visitWhile(LanguageParser.WhileContext ctx) {
+        BoolValue cond = (BoolValue) this.visit(ctx.prop());
+
+        while(cond.getValue()) {
+            visit(ctx.block());
+            cond = (BoolValue) this.visit(ctx.prop());
+        }
+        return null;
+    }
+
+    @Override
+    public Value visitIf(LanguageParser.IfContext ctx) {
+        BoolValue cond = (BoolValue) this.visit(ctx.prop());
+        if (cond.getValue()){
+            return visit(ctx.body);
+        }
+        else{
+            if (ctx.alter != null)
+                return visit(ctx.alter);
+        }
+        return null;
     }
 }

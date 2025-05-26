@@ -1,13 +1,13 @@
 package org.s367118.value;
 
-public class IntValue extends Value{
+public class FloatValue extends Value{
 
-    public IntValue(Integer value){
+    public FloatValue(Float value){
         this.value = value;
     }
-    private Integer value;
+    private Float value;
 
-    public Integer getValue() {
+    public Float getValue() {
         return value;
     }
 
@@ -47,20 +47,16 @@ public class IntValue extends Value{
 
     @Override
     public Value doAdd(IntValue left) {
-        return new IntValue(left.getValue() + this.getValue());
+        return new FloatValue(left.getValue() + this.getValue());
     }
     @Override
     public Value doAdd(FloatValue left) {
         return new FloatValue(left.getValue() + this.getValue());
     }
-    @Override
-    public Value doAdd(StringValue left) {
-        return new StringValue(left.getValue() + this.represent());
-    }
 
     @Override
     public Value doSub(IntValue left) {
-        return new IntValue(left.getValue() - this.getValue());
+        return new FloatValue(left.getValue() - this.getValue());
     }
     @Override
     public Value doSub(FloatValue left) {
@@ -69,7 +65,7 @@ public class IntValue extends Value{
 
     @Override
     public Value doMul(IntValue left) {
-        return new IntValue(left.getValue() * this.getValue());
+        return new FloatValue(left.getValue() * this.getValue());
     }
     @Override
     public Value doMul(FloatValue left) {
@@ -78,7 +74,7 @@ public class IntValue extends Value{
 
     @Override
     public Value doDiv(IntValue left) {
-        return new IntValue(left.getValue() / this.getValue());
+        return new FloatValue(left.getValue() / this.getValue());
     }
     @Override
     public Value doDiv(FloatValue left) {
@@ -87,7 +83,7 @@ public class IntValue extends Value{
 
     @Override
     public Value neg() {
-        return new IntValue(-this.getValue());
+        return new FloatValue(-this.getValue());
     }
 
     @Override
@@ -110,11 +106,11 @@ public class IntValue extends Value{
 
     @Override
     public Value doEql(IntValue left) {
-        return new BoolValue(left.getValue().equals(this.getValue()));
+        return new BoolValue(left.getValue().floatValue()== this.getValue());
     }
     @Override
     public Value doEql(FloatValue left) {
-        return new BoolValue(left.getValue().equals(this.getValue().floatValue()));
+        return new BoolValue(left.getValue().equals(this.getValue()));
     }
 
 

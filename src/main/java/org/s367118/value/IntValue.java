@@ -78,7 +78,7 @@ public class IntValue extends Value{
 
     @Override
     public Value doDiv(IntValue left) {
-        return new IntValue(left.getValue() / this.getValue());
+        return new FloatValue(left.getValue().floatValue() / this.getValue());
     }
     @Override
     public Value doDiv(FloatValue left) {

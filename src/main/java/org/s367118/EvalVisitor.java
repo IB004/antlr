@@ -1,97 +1,150 @@
 package org.s367118;
 
-import org.s367118.antlr.LanguageParser;
-import org.s367118.antlr.LanguageBaseVisitor;
+import org.s367118.antlr.ScriptyParser;
+import org.s367118.antlr.ScriptyBaseVisitor;
 import org.s367118.value.*;
 
+import javax.annotation.processing.SupportedSourceVersion;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EvalVisitor extends LanguageBaseVisitor<Value> {
+public class EvalVisitor extends ScriptyBaseVisitor<Value> {
     Map<String, Value> memory = new HashMap<>();
 
+    
+    
     @Override
-    public Value visitAssign(LanguageParser.AssignContext ctx) {
-        String id = ctx.ID().getText();  // id is left-hand side of '='
-        Value value = visit(ctx.res());   // compute value of expression on right
-        memory.put(id, value);           // store it in our memory
+    public Value visitAssign(ScriptyParser.AssignContext ctx) {
+        String id = ctx.ID().getText();
+        Value value = visit(ctx.res());
+        memory.put(id, value);
         return value;
+    }
+    
+    @Override
+    public Value visitPrint(ScriptyParser.PrintContext ctx) {
+        Value value = visit(ctx.res());
+        System.out.println(value.represent());
+        return null;
     }
 
     @Override
-    public Value visitPrint(LanguageParser.PrintContext ctx) {
-        Value value = visit(ctx.res()); // evaluate the expr child
-        System.out.println(value.represent());         // print the result
+    public Value visitIf(ScriptyParser.IfContext ctx) {
+        BoolValue cond = (BoolValue) this.visit(ctx.prop());
+        if (cond.getValue()){
+            return visit(ctx.main);
+        }
+        else{
+            if (ctx.alter != null)
+                return visit(ctx.alter);
+        }
+        return null;
+    }
+
+    @Override
+    public Value visitWhile(ScriptyParser.WhileContext ctx) {
+        BoolValue cond = (BoolValue) this.visit(ctx.prop());
+
+        while(cond.getValue()) {
+            visit(ctx.block());
+            cond = (BoolValue) this.visit(ctx.prop());
+        }
         return null;
     }
 
 
-    @Override
-    public Value visitTrue(LanguageParser.TrueContext ctx){
-        return new BoolValue(true);
-    }
+
 
     @Override
-    public Value visitFalse(LanguageParser.FalseContext ctx){
-        return new BoolValue(false);
-    }
-
-    @Override
-    public Value visitCompare(LanguageParser.CompareContext ctx){
-        Value left = visit(ctx.expr(0));  // get value of left subexpression
-        Value right = visit(ctx.expr(1)); // get value of right subexpression
-        if (ctx.op.getType() == LanguageParser.GRT)
+    public Value visitCompare(ScriptyParser.CompareContext ctx){
+        Value left = visit(ctx.left);
+        Value right = visit(ctx.right);
+        if (ctx.op.getType() == ScriptyParser.GRT)
             return left.greater(right);
-        if (ctx.op.getType() == LanguageParser.LES)
+        if (ctx.op.getType() == ScriptyParser.LES)
             return left.less(right);
         else
             return left.eql(right);
     }
 
     @Override
-    public Value visitAnd(LanguageParser.AndContext ctx) {
-        Value left = visit(ctx.prop(0));  // get value of left subexpression
-        Value right = visit(ctx.prop(1)); // get value of right subexpression
-        return left.mul(right);
-    }
-
-    @Override
-    public Value visitOr(LanguageParser.OrContext ctx) {
-        Value left = visit(ctx.prop(0));  // get value of left subexpression
-        Value right = visit(ctx.prop(1)); // get value of right subexpression
-        return left.add(right);
-    }
-
-    @Override
-    public Value visitNot(LanguageParser.NotContext ctx) {
+    public Value visitNot(ScriptyParser.NotContext ctx) {
         Value value = visit(ctx.prop());
         return value.neg();
     }
 
     @Override
-    public Value visitPropParens(LanguageParser.PropParensContext ctx) {
-        return visit(ctx.prop());
+    public Value visitAnd(ScriptyParser.AndContext ctx) {
+        Value left = visit(ctx.left);
+        Value right = visit(ctx.right);
+        return left.mul(right);
     }
 
     @Override
-    public Value visitPropId(LanguageParser.PropIdContext ctx) {
+    public Value visitOr(ScriptyParser.OrContext ctx) {
+        Value left = visit(ctx.left);
+        Value right = visit(ctx.right);
+        return left.add(right);
+    }
+
+    @Override
+    public Value visitTrue(ScriptyParser.TrueContext ctx){
+        return new BoolValue(true);
+    }
+
+    @Override
+    public Value visitFalse(ScriptyParser.FalseContext ctx){
+        return new BoolValue(false);
+    }
+
+    @Override
+    public Value visitPropId(ScriptyParser.PropIdContext ctx) {
         String id = ctx.ID().getText();
         if ( memory.containsKey(id) ) return memory.get(id);
         throw new VariableIsNotDeclaredException(id);
     }
 
     @Override
-    public Value visitInt(LanguageParser.IntContext ctx) {
+    public Value visitPropParens(ScriptyParser.PropParensContext ctx) {
+        return visit(ctx.prop());
+    }
+
+
+
+    @Override
+    public Value visitUnaryMinus(ScriptyParser.UnaryMinusContext ctx){
+        Value value = visit(ctx.expr());
+        return value.neg();
+    }
+
+    @Override
+    public Value visitMulDiv(ScriptyParser.MulDivContext ctx) {
+        Value left = visit(ctx.left);
+        Value right = visit(ctx.right);
+        if ( ctx.op.getType() == ScriptyParser.MUL ) return left.mul(right);
+        return left.div(right);
+    }
+
+    @Override
+    public Value visitAddSub(ScriptyParser.AddSubContext ctx) {
+        Value left = visit(ctx.left);
+        Value right = visit(ctx.right);
+        if ( ctx.op.getType() == ScriptyParser.ADD ) return left.add(right);
+        return left.sub(right);
+    }
+
+    @Override
+    public Value visitInt(ScriptyParser.IntContext ctx) {
         return new IntValue(Integer.valueOf(ctx.INT().getText()));
     }
 
     @Override
-    public Value visitFloat(LanguageParser.FloatContext ctx) {
+    public Value visitFloat(ScriptyParser.FloatContext ctx) {
         return new FloatValue(Float.valueOf(ctx.FLOAT().getText()));
     }
 
     @Override
-    public Value visitString(LanguageParser.StringContext ctx) {
+    public Value visitString(ScriptyParser.StringContext ctx) {
         String base = ctx.STRING().getText();
         String withoutQuotes = base.substring(1, base.length() - 1);
         String withEscapedChars = withoutQuotes
@@ -102,61 +155,19 @@ public class EvalVisitor extends LanguageBaseVisitor<Value> {
     }
 
     @Override
-    public Value visitId(LanguageParser.IdContext ctx) {
+    public Value visitId(ScriptyParser.IdContext ctx) {
         String id = ctx.ID().getText();
         if ( memory.containsKey(id) ) return memory.get(id);
         throw new VariableIsNotDeclaredException(id);
     }
 
     @Override
-    public Value visitMulDiv(LanguageParser.MulDivContext ctx) {
-        Value left = visit(ctx.expr(0));  // get value of left subexpression
-        Value right = visit(ctx.expr(1)); // get value of right subexpression
-        if ( ctx.op.getType() == LanguageParser.MUL ) return left.mul(right);
-        return left.div(right); // must be DIV
-    }
-
-    @Override
-    public Value visitAddSub(LanguageParser.AddSubContext ctx) {
-        Value left = visit(ctx.expr(0));  // get value of left subexpression
-        Value right = visit(ctx.expr(1)); // get value of right subexpression
-        if ( ctx.op.getType() == LanguageParser.ADD ) return left.add(right);
-        return left.sub(right); // must be SUB
-    }
-
-    @Override
-    public Value visitUnaryMinus(LanguageParser.UnaryMinusContext ctx){
-        Value value = visit(ctx.expr());
-        return value.neg();
-    }
-
-    @Override
-    public Value visitParens(LanguageParser.ParensContext ctx) {
-        return visit(ctx.expr()); // return child expr's value
+    public Value visitParens(ScriptyParser.ParensContext ctx) {
+        return visit(ctx.expr());
     }
 
 
-    @Override
-    public Value visitWhile(LanguageParser.WhileContext ctx) {
-        BoolValue cond = (BoolValue) this.visit(ctx.prop());
 
-        while(cond.getValue()) {
-            visit(ctx.block());
-            cond = (BoolValue) this.visit(ctx.prop());
-        }
-        return null;
-    }
 
-    @Override
-    public Value visitIf(LanguageParser.IfContext ctx) {
-        BoolValue cond = (BoolValue) this.visit(ctx.prop());
-        if (cond.getValue()){
-            return visit(ctx.body);
-        }
-        else{
-            if (ctx.alter != null)
-                return visit(ctx.alter);
-        }
-        return null;
-    }
+
 }

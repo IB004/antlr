@@ -3,8 +3,8 @@ package org.s367118;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.s367118.antlr.LanguageLexer;
-import org.s367118.antlr.LanguageParser;
+import org.s367118.antlr.ScriptyLexer;
+import org.s367118.antlr.ScriptyParser;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,10 +16,10 @@ public class Main {
         if ( args.length>0 ) inputFile = args[0];
         InputStream is = System.in;
         if ( inputFile!=null ) is = new FileInputStream(inputFile);
-        LanguageLexer lexer = new LanguageLexer(CharStreams.fromStream(is));
+        ScriptyLexer lexer = new ScriptyLexer(CharStreams.fromStream(is));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        LanguageParser parser = new LanguageParser(tokens);
-        ParseTree tree = parser.prog(); // parse
+        ScriptyParser parser = new ScriptyParser(tokens);
+        ParseTree tree = parser.prog();
 
         EvalVisitor eval = new EvalVisitor();
         eval.visit(tree);

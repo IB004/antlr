@@ -3,7 +3,9 @@ package org.s367118.value;
 public abstract class Value {
 
     // ADD operation
-    public abstract Value add(Value right);
+    public Value add(Value right){
+        throw new NotSupportedOperationException("add", this);
+    };
     public Value doAdd(IntValue left){
         throw new NotSupportedOperationException("add", left, this);
     }
@@ -19,7 +21,9 @@ public abstract class Value {
 
 
     //SUB operation
-    public abstract Value sub(Value right);
+    public Value sub(Value right){
+        throw new NotSupportedOperationException("sub", this);
+    };
     public Value doSub(IntValue left){
         throw new NotSupportedOperationException("sub", left, this);
     }
@@ -35,7 +39,9 @@ public abstract class Value {
 
 
     //MUL operation
-    public abstract Value mul(Value right);
+    public Value mul(Value right){
+        throw new NotSupportedOperationException("mul", this);
+    };
     public Value doMul(IntValue left){
         throw new NotSupportedOperationException("mul", left, this);
     }
@@ -51,7 +57,9 @@ public abstract class Value {
 
 
     //DIV operation
-    public abstract Value div(Value right);
+    public Value div(Value right) {
+        throw new NotSupportedOperationException("div", this);
+    };
     public Value doDiv(IntValue left){
         throw new NotSupportedOperationException("div", left, this);
     }
@@ -65,6 +73,38 @@ public abstract class Value {
         throw new NotSupportedOperationException("div", left, this);
     }
 
+    public Value iDiv(Value right){
+        throw new NotSupportedOperationException("idiv", this);
+    };
+    public Value doIDiv(IntValue left){
+        throw new NotSupportedOperationException("idiv", left, this);
+    }
+    public Value doIDiv(FloatValue left){
+        throw new NotSupportedOperationException("idiv", left, this);
+    }
+    public Value doIDiv(BoolValue left){
+        throw new NotSupportedOperationException("idiv", left, this);
+    }
+    public Value doIDiv(StringValue left){
+        throw new NotSupportedOperationException("idiv", left, this);
+    }
+
+    public Value mod(Value right){
+        throw new NotSupportedOperationException("mod", this);
+    };
+    public Value doMod(IntValue left){
+        throw new NotSupportedOperationException("mod", left, this);
+    }
+    public Value doMod(FloatValue left){
+        throw new NotSupportedOperationException("mod", left, this);
+    }
+    public Value doMod(BoolValue left){
+        throw new NotSupportedOperationException("mod", left, this);
+    }
+    public Value doMod(StringValue left){
+        throw new NotSupportedOperationException("mod", left, this);
+    }
+
 
     //NEG operation
     public Value neg(){
@@ -73,7 +113,9 @@ public abstract class Value {
 
 
     //GRT operation
-    public abstract Value greater(Value right);
+    public Value greater(Value right){
+        throw new NotSupportedOperationException("grt", this);
+    };
     public Value doGreater(IntValue left){
         throw new NotSupportedOperationException("grt", left, this);
     }
@@ -89,7 +131,9 @@ public abstract class Value {
 
 
     //LES operation
-    public abstract Value less(Value right);
+    public Value less(Value right){
+        throw new NotSupportedOperationException("less", this);
+    };
     public Value doLess(IntValue left){
         throw new NotSupportedOperationException("less", left, this);
     }
@@ -106,7 +150,9 @@ public abstract class Value {
 
 
     //EQL operation
-    public abstract Value eql(Value right);
+    public Value eql(Value right){
+        throw new NotSupportedOperationException("eql", this);
+    };
     public Value doEql(IntValue left){
         throw new NotSupportedOperationException("eql", left, this);
     }

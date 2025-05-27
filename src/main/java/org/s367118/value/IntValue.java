@@ -30,6 +30,14 @@ public class IntValue extends Value{
         return right.doDiv(this);
     }
     @Override
+    public Value iDiv(Value right) {
+        return right.doIDiv(this);
+    }
+    @Override
+    public Value mod(Value right) {
+        return right.doMod(this);
+    }
+    @Override
     public Value greater(Value right) {
         return right.doGreater(this);
     }
@@ -83,6 +91,16 @@ public class IntValue extends Value{
     @Override
     public Value doDiv(FloatValue left) {
         return new FloatValue(left.getValue() / this.getValue());
+    }
+
+    @Override
+    public Value doIDiv(IntValue left) {
+        return new IntValue(left.getValue() / this.getValue());
+    }
+
+    @Override
+    public Value doMod(IntValue left) {
+        return new IntValue(left.getValue() % this.getValue());
     }
 
     @Override

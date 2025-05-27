@@ -121,8 +121,16 @@ public class EvalVisitor extends ScriptyBaseVisitor<Value> {
     public Value visitMulDiv(ScriptyParser.MulDivContext ctx) {
         Value left = visit(ctx.left);
         Value right = visit(ctx.right);
-        if ( ctx.op.getType() == ScriptyParser.MUL ) return left.mul(right);
-        return left.div(right);
+        switch(ctx.op.getType()){
+            case ScriptyParser.DIV:
+                return left.div(right);
+            case ScriptyParser.IDIV:
+                return left.iDiv(right);
+            case ScriptyParser.MOD:
+                return left.mod(right);
+            default:
+                return left.mul(right);
+        }
     }
 
     @Override

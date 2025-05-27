@@ -34,20 +34,22 @@ prop:   left=expr op=(GRT|LES|EQL) right=expr   # Compare
     |   '(' prop ')'                            # PropParens
     ;
 
-expr:   SUB expr                                # UnaryMinus
-    |   left=expr op=(MUL|DIV) right=expr       # MulDiv
-    |   left=expr op=(ADD|SUB) right=expr       # AddSub
-    |   INT                                     # Int
-    |   FLOAT                                   # Float
-    |   STRING                                  # String
-    |   ID                                      # Id
-    |   '(' expr ')'                            # Parens
+expr:   SUB expr                                        # UnaryMinus
+    |   left=expr op=(MUL|DIV|IDIV|MOD) right=expr      # MulDiv
+    |   left=expr op=(ADD|SUB) right=expr               # AddSub
+    |   INT                                             # Int
+    |   FLOAT                                           # Float
+    |   STRING                                          # String
+    |   ID                                              # Id
+    |   '(' expr ')'                                    # Parens
     ;
 
 ADD     :   '+' ;
 SUB     :   '-' ;
 MUL     :   '*' ;
 DIV     :   '/' ;
+MOD     :   '%' ;
+IDIV    :   '//';
 
 GRT     :   '>' ;
 LES     :   '<' ;
@@ -73,4 +75,4 @@ STRING  :   '"' ('\\"' | ~["\r\n])* '"' ;
 
 END     :   ';' ;
 WS      :   [ \t\n\r]+ -> skip ;
-COMMENT :   '//' ~[\r\n]* '\r'? '\n' -> skip ;
+COMMENT :   '#' ~[\r\n]* '\r'? '\n' -> skip ;

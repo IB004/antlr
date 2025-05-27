@@ -18,24 +18,8 @@ public class BoolValue extends Value{
         return right.doAdd(this);
     }
     @Override
-    public Value sub(Value right) {
-        return right.doSub(this);
-    }
-    @Override
     public Value mul(Value right) {
         return right.doMul(this);
-    }
-    @Override
-    public Value div(Value right) {
-        return right.doDiv(this);
-    }
-    @Override
-    public Value greater(Value right) {
-        return right.doGreater(this);
-    }
-    @Override
-    public Value less(Value right) {
-        return right.doLess(this);
     }
     @Override
     public Value eql(Value right) {

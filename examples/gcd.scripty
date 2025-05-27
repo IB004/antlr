@@ -1,0 +1,17 @@
+a = 784;
+b = 256;
+
+_a = a;
+_b = b;
+while (!(_a == 0) && !(_b == 0)){
+    if (_a > _b){
+        _a = _a % _b;
+        res = _b;
+    }
+    else{
+        _b = _b % _a;
+        res = _a;
+    }
+}
+
+print("The greatest common divisor of " + a + " and " + b + " is " + res + ".");

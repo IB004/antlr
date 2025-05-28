@@ -1,0 +1,15 @@
+a1 = 0;
+a2 = 1;
+n = 29;
+
+prev = a1;
+curr = a2;
+i = 2;
+while (i < n){
+    new = curr + prev;
+    prev = curr;
+    curr = new;
+    i = i + 1;
+}
+
+print("The " + n + " element is " + curr + ".");

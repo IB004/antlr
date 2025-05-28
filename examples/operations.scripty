@@ -1,0 +1,23 @@
+a = 42;
+b = 11;
+pi = 3.14;
+t = true;
+f = false;
+s = "hello";
+
+print(a + b);           # 53
+print(a + pi);          # 45.14
+print(a + s);           # 42hello
+print(s + a);           # hello42
+
+
+print(---b);            # -11
+print(-2 + a * 0.5);    # 19.0
+
+print(a / b);           # 3.8181818
+print(a // b);          # 3
+print(a % b);           # 9
+
+print(!t);              # false
+print(t && f);          # false
+print(t || f);          # true

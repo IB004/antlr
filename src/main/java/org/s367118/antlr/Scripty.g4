@@ -66,12 +66,12 @@ WHILE   :   'while' ;
 IF      :   'if' ;
 ELSE    :   'else' ;
 
-ID      :   [a-zA-Z_][a-zA-Z0-9_]* ;
 INT     :   [+-]?[0-9]+ ;
 FLOAT   :   [+-]?[0-9]*'.'[0-9]+ ;
 TRUE    :   'true' ;
 FALSE   :   'false' ;
 STRING  :   '"' ('\\"' | ~["\r\n])* '"' ;
+ID      :   [a-zA-Z_][a-zA-Z0-9_]* ;
 
 END     :   ';' ;
 WS      :   [ \t\n\r]+ -> skip ;

@@ -53,6 +53,10 @@ public class FloatValue extends Value{
     public Value doAdd(FloatValue left) {
         return new FloatValue(left.getValue() + this.getValue());
     }
+    @Override
+    public Value doAdd(StringValue left) {
+        return new StringValue(left.getValue() + this.represent());
+    }
 
     @Override
     public Value doSub(IntValue left) {

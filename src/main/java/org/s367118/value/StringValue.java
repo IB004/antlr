@@ -30,6 +30,14 @@ public class StringValue extends Value{
         return new StringValue(left.represent() + this.getValue());
     }
     @Override
+    public Value doAdd(FloatValue left) {
+        return new StringValue(left.represent() + this.getValue());
+    }
+    @Override
+    public Value doAdd(BoolValue left) {
+        return new StringValue(left.represent() + this.getValue());
+    }
+    @Override
     public Value doAdd(StringValue left) {
         return new StringValue(left.getValue() + this.represent());
     }

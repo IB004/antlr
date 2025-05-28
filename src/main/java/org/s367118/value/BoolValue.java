@@ -33,6 +33,10 @@ public class BoolValue extends Value{
     public Value doAdd(BoolValue left) {
         return new BoolValue(left.getValue() || this.getValue());
     }
+    @Override
+    public Value doAdd(StringValue left) {
+        return new StringValue(left.getValue() + this.represent());
+    }
 
     @Override
     public Value doMul(BoolValue left) {

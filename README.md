@@ -158,7 +158,7 @@ NotSupportedOperationException: FloatValue 'mul' BoolValue is not supported.
 
 Интерпреатор написан на языке `Java` с применением `ANTLR`. 
 
-Грамматика Scripty описана в [Scripty.g4](./src/main/java/org/s367118/antlr/Scriptyt.g4).
+Грамматика Scripty описана в [Scripty.g4](./src/main/java/org/s367118/antlr/Scripty.g4).
 
 Обработка узлов происходит в [EvalVisitor.java](./src/main/java/org/s367118/EvalVisitor.java).
 

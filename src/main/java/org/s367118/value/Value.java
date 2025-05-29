@@ -105,11 +105,50 @@ public abstract class Value {
         throw new NotSupportedOperationException("mod", left, this);
     }
 
-
     //NEG operation
     public Value neg(){
         throw new NotSupportedOperationException("neg", this);
     }
+
+    // AND operation
+    public Value and(Value right){
+        throw new NotSupportedOperationException("and", this);
+    };
+    public Value doAnd(IntValue left){
+        throw new NotSupportedOperationException("and", left, this);
+    }
+    public Value doAnd(FloatValue left){
+        throw new NotSupportedOperationException("and", left, this);
+    }
+    public Value doAnd(BoolValue left){
+        throw new NotSupportedOperationException("and", left, this);
+    }
+    public Value doAnd(StringValue left){
+        throw new NotSupportedOperationException("and", left, this);
+    }
+
+    // OR operation
+    public Value or(Value right){
+        throw new NotSupportedOperationException("add", this);
+    };
+    public Value doOr(IntValue left){
+        throw new NotSupportedOperationException("or", left, this);
+    }
+    public Value doOr(FloatValue left){
+        throw new NotSupportedOperationException("or", left, this);
+    }
+    public Value doOr(BoolValue left){
+        throw new NotSupportedOperationException("or", left, this);
+    }
+    public Value doOr(StringValue left){
+        throw new NotSupportedOperationException("or", left, this);
+    }
+
+    //NOT operation
+    public Value not(){
+        throw new NotSupportedOperationException("not", this);
+    }
+
 
 
     //GRT operation

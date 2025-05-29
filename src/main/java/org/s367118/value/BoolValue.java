@@ -18,8 +18,18 @@ public class BoolValue extends Value{
         return right.doAdd(this);
     }
     @Override
-    public Value mul(Value right) {
-        return right.doMul(this);
+    public Value not() {
+        return new BoolValue(!this.value);
+    }
+
+    @Override
+    public Value and(Value right) {
+        return right.doAnd(this);
+    }
+
+    @Override
+    public Value or(Value right) {
+        return right.doOr(this);
     }
     @Override
     public Value eql(Value right) {
@@ -30,23 +40,20 @@ public class BoolValue extends Value{
     // Concrete types operations support
 
     @Override
-    public Value doAdd(BoolValue left) {
-        return new BoolValue(left.getValue() || this.getValue());
-    }
-    @Override
     public Value doAdd(StringValue left) {
         return new StringValue(left.getValue() + this.represent());
     }
 
     @Override
-    public Value doMul(BoolValue left) {
+    public Value doAnd(BoolValue left) {
         return new BoolValue(left.getValue() && this.getValue());
     }
 
     @Override
-    public Value neg() {
-        return new BoolValue(!this.getValue());
+    public Value doOr(BoolValue left) {
+        return new BoolValue(left.getValue() || this.getValue());
     }
+
 
     @Override
     public Value doEql(BoolValue left) {

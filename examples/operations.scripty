@@ -5,22 +5,22 @@ t = true;
 f = false;
 s = "hello: ";
 
-print(a + b);               # 53
-print(a + pi);              # 45.14
+print(a + b);                # 53
+print(a + pi);               # 45.14
 
-print(s + a);               # hello: 42
-print(s + pi);              # hello: 3.14
-print(s + t);               # hello: true
-print(s + s);               # hello: hello:
-print(s + "\"Scripty\"")    # hello: "Scripty"
+print(s + a);                # hello: 42
+print(s + pi);               # hello: 3.14
+print(s + t);                # hello: true
+print(s + s);                # hello: hello:
+print(s + "\"Scripty\"");    # hello: "Scripty"
 
-print(---b);                # -11
-print(-2 + a * 0.5);        # 19.0
+print(---b);                 # -11
+print(-2 + a * 0.5);         # 19.0
 
-print(a / b);               # 3.8181818
-print(a // b);              # 3
-print(a % b);               # 9
+print(a / b);                # 3.8181818
+print(a // b);               # 3
+print(a % b);                # 9
 
-print(!t);                  # false
-print(t && f);              # false
-print(t || f);              # true
+print(!t);                   # false
+print(t && f);               # false
+print(t || f);               # true

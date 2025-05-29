@@ -70,21 +70,21 @@ public class EvalVisitor extends ScriptyBaseVisitor<Value> {
     @Override
     public Value visitNot(ScriptyParser.NotContext ctx) {
         Value value = visit(ctx.prop());
-        return value.neg();
+        return value.not();
     }
 
     @Override
     public Value visitAnd(ScriptyParser.AndContext ctx) {
         Value left = visit(ctx.left);
         Value right = visit(ctx.right);
-        return left.mul(right);
+        return left.and(right);
     }
 
     @Override
     public Value visitOr(ScriptyParser.OrContext ctx) {
         Value left = visit(ctx.left);
         Value right = visit(ctx.right);
-        return left.add(right);
+        return left.or(right);
     }
 
     @Override
